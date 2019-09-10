@@ -40,6 +40,18 @@ function setupBitmapClass(bitmapClass) {
         get: function() { return Application.android; }
     });
 
+    // beginDrawing()
+    bitmapClass.prototype.beginDrawing = function() {
+        this._beginDrawing();
+        return this;
+    };
+
+    // endDrawing()
+    bitmapClass.prototype.finishDrawing = function() {
+        this._endDrawing();
+        return this;
+    };
+
     // clone()
     bitmapClass.prototype.clone = function() {
         return bitmapClass.asBitmap(this._clone());

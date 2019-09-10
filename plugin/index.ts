@@ -20,10 +20,10 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-import Application = require("application");
+import * as Application from "application";
 var BitmapFactory = require("./BitmapFactory");
-import ImageSource = require('image-source');
-import TypeUtils = require("utils/types");
+import * as ImageSource from "image-source";
+import * as TypeUtils from "utils/types";
 
 
 /**
@@ -202,6 +202,19 @@ export interface IBitmap {
      * Get the android specific object provided by 'application' module.
      */
     android: Application.AndroidApplication;
+
+    /**
+     * Begin drawing in the bitmap.
+     *
+     * @return {IBitmap} Same bitmap.
+     */
+    beginDrawing(): IBitmap;
+    /**
+     * Finish drawing in the bitmap.
+     *
+     * @return {IBitmap} Same bitmap.
+     */
+    finishDrawing(): IBitmap;
 
     /**
      * Clones that bitmap.

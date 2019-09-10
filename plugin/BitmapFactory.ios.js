@@ -42,6 +42,9 @@ function iOSImage(uiImage, opts) {
 
     this._isDisposed = false;
     this._nativeObject = uiImage;
+    this._isDrawing = false;
+    this._drawingContext = null;
+    this._drawingOldImage = null;
     this._options = opts;
 }
 exports.BitmapClass = iOSImage;
@@ -67,48 +70,100 @@ Object.defineProperty(iOSImage.prototype, '__doAutoRelease', {
     }
 });
 
-// [iOS INTERNAL] __onImageContext()
-iOSImage.prototype.__onImageContext = function(action, tag) {
-    var oldImg = this._nativeObject;
-    
-    UIGraphicsBeginImageContext(CGSizeMake(oldImg.size.width, oldImg.size.height));
-    var newImage;
-    var result;
-    try {
-        var context = UIGraphicsGetCurrentContext();
+// [INTERNAL] _beginDrawing()
+iOSImage.prototype._beginDrawing = function() {
+    if (!this._isDrawing) {
+        this._isDrawing = true;
 
-        oldImg.drawInRect(CGRectMake(0, 0,
-                                     oldImg.size.width, oldImg.size.height));
-
-        result = action(context, tag, oldImg);
-
-        newImage = UIGraphicsGetImageFromCurrentImageContext();
+        this._drawingOldImage = this._nativeObject;
+        UIGraphicsBeginImageContext(CGSizeMake(this._drawingOldImage.size.width, this._drawingOldImage.size.height));
+        this._drawingContext = UIGraphicsGetCurrentContext();
+        this._drawingOldImage.drawInRect(CGRectMake(0, 0, this._drawingOldImage.size.width, this._drawingOldImage.size.height));
     }
-    finally {
-        UIGraphicsEndImageContext();
-    }
+};
 
-    this._nativeObject = newImage;
+// [INTERNAL] _endDrawing()
+iOSImage.prototype._endDrawing = function() {
+    if (this._isDrawing) {
+        this._isDrawing = false;
 
-    // free memory of old image
-    try {
-        var cImg = oldImg.CGImage;
+        var newImage = null;
         try {
-            if (!TypeUtils.isNullOrUndefined(cImg)) {
-                if (!this.__doAutoRelease) {
-                    CGImageRelease(oldImg.CGImage);  // invoke manually
+            newImage = UIGraphicsGetImageFromCurrentImageContext();
+        }
+        finally {
+            UIGraphicsEndImageContext();
+        }
+
+        this._nativeObject = newImage;
+
+        // free memory of old image
+        try {
+            var cImg = this._drawingOldImage.CGImage;
+            try {
+                if (!TypeUtils.isNullOrUndefined(cImg)) {
+                    if (!this.__doAutoRelease) {
+                        CGImageRelease(this._drawingOldImage.CGImage);  // invoke manually
+                    }
                 }
+            }
+            finally {
+                cImg = null;
             }
         }
         finally {
-            cImg = null;
+            this._drawingOldImage = null;
         }
     }
-    finally {
-        oldImg = null;
-    }
+};
 
-    return result;
+// [iOS INTERNAL] __onImageContext()
+iOSImage.prototype.__onImageContext = function(action, tag) {
+    if (!this._isDrawing) {
+        var oldImg = this._nativeObject;
+
+        UIGraphicsBeginImageContext(CGSizeMake(oldImg.size.width, oldImg.size.height));
+        var newImage;
+        var result;
+        try {
+            var context = UIGraphicsGetCurrentContext();
+
+            oldImg.drawInRect(CGRectMake(0, 0,
+                                         oldImg.size.width, oldImg.size.height));
+
+            result = action(context, tag, oldImg);
+
+            newImage = UIGraphicsGetImageFromCurrentImageContext();
+        }
+        finally {
+            UIGraphicsEndImageContext();
+        }
+
+        this._nativeObject = newImage;
+
+        // free memory of old image
+        try {
+            var cImg = oldImg.CGImage;
+            try {
+                if (!TypeUtils.isNullOrUndefined(cImg)) {
+                    if (!this.__doAutoRelease) {
+                        CGImageRelease(oldImg.CGImage);  // invoke manually
+                    }
+                }
+            }
+            finally {
+                cImg = null;
+            }
+        }
+        finally {
+            oldImg = null;
+        }
+
+        return result;
+    } else {
+        var result = action(this._drawingContext, tag, this._drawingOldImage);
+        return result;
+    }
 };
 
 // [iOS INTERNAL] __toIOSColor()
@@ -175,11 +230,13 @@ iOSImage.prototype._drawLine = function(start, end, color) {
 
         CGContextSetLineWidth(context, 1.0);
 
+        CGContextSetShouldAntialias(context, false);
         CGContextMoveToPoint(context, start.x, start.y);
         CGContextAddLineToPoint(context,
                                 end.x, end.y);
 
         CGContextStrokePath(context);
+        CGContextSetShouldAntialias(context, true);
     });
 };
 
@@ -287,6 +344,8 @@ iOSImage.prototype._insert = function(other, leftTop) {
                              oldImage.size.width - left);
         var height = Math.min(bmp.height,
                               oldImage.size.height - top);
+        width = bmp.width;
+        height = bmp.height;
 
         bmp._nativeObject
            .drawInRect(CGRectMake(leftTop.x, leftTop.y,

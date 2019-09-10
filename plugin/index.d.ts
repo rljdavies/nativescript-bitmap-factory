@@ -154,6 +154,18 @@ export interface IBitmap {
      */
     android: Application.AndroidApplication;
     /**
+     * Begin drawing in the bitmap.
+     *
+     * @return {IBitmap} Same bitmap.
+     */
+    beginDrawing(): IBitmap;
+    /**
+     * Finish drawing in the bitmap.
+     *
+     * @return {IBitmap} Same bitmap.
+     */
+    finishDrawing(): IBitmap;
+    /**
      * Clones that bitmap.
      *
      * @return {IBitmap} Cloned bitmap.
