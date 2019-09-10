@@ -4,3 +4,6 @@
 /plugin/index.js.map
 /demo/app/*.map
 /demo/.vscode
+publish/src
+publish/package
+node_modules
