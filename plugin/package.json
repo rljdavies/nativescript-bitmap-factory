@@ -1,5 +1,5 @@
 {
-  "name": "nativescript-bitmap-factory",
+  "name": "nativescript-bitmap-factory-wf",
   "description": "A NativeScript module for creating and manipulating bitmap images.",
   "version": "1.8.1",
   "nativescript": {
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mkloubert/nativescript-bitmap-factory"
+    "url": "https://github.com/whutsfree/nativescript-bitmap-factory"
   },
   "keywords": [
     "NativeScript",
