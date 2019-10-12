@@ -216,6 +216,22 @@ AndroidBitmap.prototype._getPoint = function(coordinates) {
                .getPixel(coordinates.x, coordinates.y);
 };
 
+// [INTERNAL] _grayScale()
+AndroidBitmap.prototype._grayScale = function() {
+    var height = this._nativeObject.getHeight();
+    var width = this._nativeObject.getWidth();
+
+    var bmpGrayscale = android.graphics.Bitmap.createBitmap(width, height, android.graphics.Bitmap.Config.ARGB_8888);
+    var c = new android.graphics.Canvas(bmpGrayscale);
+    var paint = new android.graphics.Paint();
+    var cm = new android.graphics.ColorMatrix();
+    cm.setSaturation(0);
+    var f = new android.graphics.ColorMatrixColorFilter(cm);
+    paint.setColorFilter(f);
+    c.drawBitmap(this._nativeObject, 0, 0, paint);
+    return bmpGrayscale;
+};
+
 // [INTERNAL] _insert()
 AndroidBitmap.prototype._insert = function(other, leftTop) {
     var bmp = asBitmapObject(other);

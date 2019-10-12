@@ -1,17 +1,17 @@
 // The MIT License (MIT)
-// 
+//
 // Copyright (c) Marcel Joachim Kloubert <marcel.kloubert@gmx.net>
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to
 // deal in the Software without restriction, including without limitation the
 // rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
 // sell copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -171,7 +171,7 @@ iOSImage.prototype.__toIOSColor = function(color) {
     if (TypeUtils.isNullOrUndefined(color)) {
         return null;
     }
-    
+
     return {
         a: color.a / 255.0,
         r: color.r / 255.0,
@@ -258,7 +258,7 @@ iOSImage.prototype._drawOval = function(size, leftTop, color, fillColor) {
 
             CGContextFillEllipseInRect(context, rect);
         }
-        
+
         CGContextStrokeEllipseInRect(context, rect);
     });
 };
@@ -310,7 +310,7 @@ iOSImage.prototype._drawRect = function(size, leftTop, color, fillColor) {
 
             CGContextFillRect(context, rect);
         }
-        
+
         CGContextStrokeRect(context, rect);
     });
 };
@@ -328,6 +328,20 @@ iOSImage.prototype._getPoint = function(coordinates) {
     var a = data[pixelInfo + 3];
 
     return (a << 24) | (r << 16) | (g << 8) | b;
+};
+
+// [INTERNAL] _grayScale()
+iOSImage.prototype._grayScale = function() {
+    var inputImage = CIImage.alloc().initWithImage(this._nativeObject);
+    var filter = CIFilter.filterWithName('CIPhotoEffectMono');
+    filter.setValueForKey(inputImage, kCIInputImageKey);
+    filter.setDefaults();
+    var filteredImg = filter.valueForKey(kCIOutputImageKey);
+
+    var outputCGImage = new CIContext(null).createCGImageFromRect(filteredImg, filteredImg.extent);
+    var outputUIImage = UIImage.imageWithCGImage(outputCGImage);
+
+    return outputUIImage;
 };
 
 // [INTERNAL] _insert()
@@ -399,7 +413,7 @@ iOSImage.prototype._setPoint = function(coordinates, color) {
 
     this.__onImageContext(function(context) {
         CGContextSetRGBFillColor(context, color.r, color.g, color.b, color.a);
-        
+
         CGContextFillRect(context, CGRectMake(coordinates.x, coordinates.y,
                                               1, 1));
     });
@@ -434,7 +448,7 @@ iOSImage.prototype._toObject = function(format, quality) {
     var bitmapData = {};
 
     var base64 = imageData.base64EncodedStringWithOptions(null);
-    
+
     // base64
     Object.defineProperty(bitmapData, 'base64', {
         get: function() { return base64; }
@@ -498,7 +512,7 @@ iOSImage.prototype._writeText = function(txt, leftTop, font) {
 
     settings.addAttributeValueRange(NSFontAttributeName, iosFont,
                                     settingsRange);
-    
+
     this.__onImageContext(function(context, tag, oldImage) {
         if (antiAlias) {
             CGContextSetAllowsAntialiasing(context, true);

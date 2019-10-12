@@ -272,6 +272,10 @@ export interface IBitmap {
      */
     getPoint(coordinates?: IPoint2D | string): IArgb;
     /**
+     * Converts the bitmap to a grayscale image.
+     */
+    grayScale(): IBitmap;
+    /**
      * Gets the height of the bitmap.
      */
     height: number;
