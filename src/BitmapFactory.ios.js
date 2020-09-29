@@ -21,8 +21,8 @@
 // DEALINGS IN THE SOFTWARE.
 
 var BitmapFactoryCommons = require('./BitmapFactory.commons');
-var ImageSource = require('image-source');
-var TypeUtils = require("utils/types");
+var ImageSource = require('@nativescript/core/image-source');
+var TypeUtils = require("@nativescript/core/utils/types");
 
 // default options
 var defaultOptions;

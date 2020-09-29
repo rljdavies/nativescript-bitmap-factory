@@ -20,11 +20,11 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-var Application = require('application');
+var Application = require('@nativescript/core/application');
 var BitmapFactoryCommons = require('./BitmapFactory.commons');
-var FS = require('file-system');
-var ImageSource = require('image-source');
-var TypeUtils = require("utils/types");
+var FS = require('@nativescript/core/file-system');
+var ImageSource = require('@nativescript/core/image-source');
+var TypeUtils = require("@nativescript/core/utils/types");
 
 
 // default options
