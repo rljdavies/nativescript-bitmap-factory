@@ -1,4 +1,4 @@
-PLEASE NOTE THIS REPO INCLUDES A FIX FOR A BITMAP ROTATION BUG PRESENT IN THE NOW ARCHIVED ORIGINAL PROJECT
+PLEASE NOTE THIS REPO INCLUDES A FIX FOR A BITMAP ROTATION BUG PRESENT IN THE NOW ARCHIVED ORIGINAL PROJECT https://github.com/mkloubert/nativescript-bitmap-factory
 
 [![npm](https://img.shields.io/npm/v/nativescript-bitmap-factory.svg)](https://www.npmjs.com/package/nativescript-bitmap-factory)
 [![npm](https://img.shields.io/npm/dt/nativescript-bitmap-factory.svg?label=npm%20downloads)](https://www.npmjs.com/package/nativescript-bitmap-factory)
